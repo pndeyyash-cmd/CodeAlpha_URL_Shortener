@@ -1,6 +1,6 @@
 # url_shortener.py (Updated for LinkedIn Preview)
 
-from flask import Flask, render_template_string, request, redirect, g
+from flask import Flask, render_template_string, request, redirect, g, url_for
 import string
 import random
 import sqlite3
@@ -55,6 +55,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <title>URL Shortener by Yash Vardhan Pandey</title>
     
     <!-- === ADDED META TAGS FOR LINKEDIN PREVIEW === -->
@@ -63,14 +64,81 @@ HTML_TEMPLATE = """
     <meta property="og:type" content="website">
     
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background-color: #1e1e1e; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); text-align: center; width: 90%; max-width: 500px; }
-        h1 { color: #00bcd4; margin-bottom: 20px; }
-        input[type='url'] { width: calc(100% - 22px); padding: 10px; margin-bottom: 20px; border: 1px solid #333; border-radius: 5px; background-color: #2c2c2c; color: #e0e0e0; font-size: 16px; }
-        button { background-color: #00bcd4; color: #121212; border: none; padding: 12px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease; }
-        button:hover { background-color: #0097a7; }
-        .result { margin-top: 30px; background-color: #2c2c2c; padding: 15px; border-radius: 5px; word-wrap: break-word; }
-        .result a { color: #00e5ff; text-decoration: none; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #121212; 
+            color: #e0e0e0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            /* Updated background styling */
+            background-image: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .container { 
+            background-color: rgba(30, 30, 30, 0.85); /* Semi-transparent background */
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); 
+            text-align: center; 
+            width: 90%; 
+            max-width: 500px;
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        h1 { 
+            color: #00e5ff; 
+            margin-bottom: 25px; 
+            font-weight: 700;
+        }
+        input[type='url'] { 
+            width: calc(100% - 24px); 
+            padding: 12px; 
+            margin-bottom: 20px; 
+            border: 1px solid #444; 
+            border-radius: 8px; 
+            background-color: #2c2c2c; 
+            color: #e0e0e0; 
+            font-size: 16px; 
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type='url']:focus {
+            outline: none;
+            border-color: #00e5ff;
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.2);
+        }
+        button { 
+            background-color: #00e5ff; 
+            color: #121212; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: 600;
+            cursor: pointer; 
+            transition: background-color 0.3s ease, transform 0.2s ease; 
+        }
+        button:hover { 
+            background-color: #00c4cc;
+            transform: translateY(-2px);
+        }
+        .result { 
+            margin-top: 30px; 
+            background-color: #2c2c2c; 
+            padding: 20px; 
+            border-radius: 8px; 
+            word-wrap: break-word; 
+            border: 1px solid #444;
+        }
+        .result a { 
+            color: #00e5ff; 
+            text-decoration: none; 
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
