@@ -1,4 +1,4 @@
-# url_shortener.py (Updated for Deployment)
+# url_shortener.py (Updated for LinkedIn Preview)
 
 from flask import Flask, render_template_string, request, redirect, g
 import string
@@ -42,7 +42,6 @@ def generate_short_code(length=6):
     characters = string.ascii_letters + string.digits
     while True:
         short_code = ''.join(random.choice(characters) for _ in range(length))
-        # Check if it's already in the database
         cursor = get_db().cursor()
         cursor.execute("SELECT short_code FROM urls WHERE short_code = ?", (short_code,))
         if not cursor.fetchone():
@@ -56,7 +55,13 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>URL Shortener by Yash Vardhan Pandey</title>
+    
+    <!-- === ADDED META TAGS FOR LINKEDIN PREVIEW === -->
+    <meta property="og:title" content="Full-Stack URL Shortener Project">
+    <meta property="og:description" content="A custom URL shortener built with Python, Flask, and SQLite by Yash Vardhan Pandey. Deployed live on Render.">
+    <meta property="og:type" content="website">
+    
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #121212; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .container { background-color: #1e1e1e; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); text-align: center; width: 90%; max-width: 500px; }
